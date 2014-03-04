@@ -68,4 +68,16 @@ class Api::V1::CookbooksController < Api::V1Controller
     @start = params.fetch(:start, 0).to_i
     @items = [params.fetch(:items, 10).to_i, 100].min
   end
+
+  #
+  # POST /api/v1/cookbooks
+  #
+  # Create a new cookbook and/or cookbook version.
+  #
+  # @example
+  #   POST /api/v1/cookbooks
+  #
+  def create
+    render json: { uri: 'http://localhost:3000/api/v1/cookbooks/redis' }, status: 200
+  end
 end

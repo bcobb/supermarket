@@ -187,4 +187,24 @@ describe Api::V1::CookbooksController do
       expect(cookbooks.size).to eql 5
     end
   end
+
+  describe '#create' do
+    let(:payload) do
+      File.read('spec/support/cookbook_fixtures/redis.tar.gz')
+    end
+
+    context 'a new cookbook is being shared' do
+      before(:each) do
+        post :create, cookbook: 'redis', tarball: payload
+      end
+
+      it 'creates a new cookbook'
+      it 'creates a new cookbook version'
+      it 'sends the cookbook URI to the view'
+
+      it 'returns a 200' do
+        expect(response.status.to_i).to eql(200)
+      end
+    end
+  end
 end
