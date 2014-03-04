@@ -194,15 +194,23 @@ describe Api::V1::CookbooksController do
     end
 
     context 'a new cookbook is being shared' do
-      before(:each) do
-        post :create, cookbook: 'redis', tarball: payload
+      it 'creates a new cookbook' do
+        expect { post :create, cookbook: 'redis', tarball: payload, format: :json }
+        .to change(Cookbook, :count).by(1)
       end
 
-      it 'creates a new cookbook'
-      it 'creates a new cookbook version'
-      it 'sends the cookbook URI to the view'
+      it 'creates a new cookbook version' do
+        expect { post :create, cookbook: 'redis', tarball: payload, format: :json }
+        .to change(CookbookVersion, :count).by(1)
+      end
+
+      it 'sends the cookbook to the view' do
+        post :create, cookbook: 'redis', tarball: payload, format: :json
+        expect(assigns[:cookbook]).to_not be_nil
+      end
 
       it 'returns a 200' do
+        post :create, cookbook: 'redis', tarball: payload, format: :json
         expect(response.status.to_i).to eql(200)
       end
     end
