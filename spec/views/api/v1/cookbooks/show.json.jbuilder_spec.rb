@@ -7,7 +7,6 @@ describe 'api/v1/cookbooks/show' do
       name: 'redis',
       maintainer: 'slime',
       description: 'great cookbook',
-      category: 'datastore',
       external_url: 'http://example.com',
       deprecated: false
     )
@@ -79,7 +78,7 @@ describe 'api/v1/cookbooks/show' do
     render
 
     cookbook_category = json_body['category']
-    expect(cookbook_category).to eql('datastore')
+    expect(cookbook_category).to eql('Other')
   end
 
   it "displays the url to cookbook's latest version" do

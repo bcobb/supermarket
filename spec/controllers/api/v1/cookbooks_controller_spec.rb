@@ -189,28 +189,35 @@ describe Api::V1::CookbooksController do
   end
 
   describe '#create' do
-    let(:payload) do
-      File.read('spec/support/cookbook_fixtures/redis.tar.gz')
-    end
+    let(:payload) { File.read('spec/support/cookbook_fixtures/redis.tar.gz') }
+    let!(:category) { create(:category, name: 'Databases') }
 
     context 'a new cookbook is being shared' do
+      let(:share) do
+        post :create, cookbook: { category: 'databases' },
+                      tarball: payload, format: :json
+      end
+
+      it 'finds a category to associate the cookbook to' do
+        share
+        expect(assigns[:category].name).to eql('Databases')
+      end
+
       it 'creates a new cookbook' do
-        expect { post :create, cookbook: 'redis', tarball: payload, format: :json }
-        .to change(Cookbook, :count).by(1)
+        expect { share }.to change(Cookbook, :count).by(1)
       end
 
       it 'creates a new cookbook version' do
-        expect { post :create, cookbook: 'redis', tarball: payload, format: :json }
-        .to change(CookbookVersion, :count).by(1)
+        expect { share }.to change(CookbookVersion, :count).by(1)
       end
 
       it 'sends the cookbook to the view' do
-        post :create, cookbook: 'redis', tarball: payload, format: :json
+        share
         expect(assigns[:cookbook]).to_not be_nil
       end
 
       it 'returns a 200' do
-        post :create, cookbook: 'redis', tarball: payload, format: :json
+        share
         expect(response.status.to_i).to eql(200)
       end
     end

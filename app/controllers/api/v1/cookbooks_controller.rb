@@ -72,13 +72,13 @@ class Api::V1::CookbooksController < Api::V1Controller
   #
   # POST /api/v1/cookbooks
   #
-  # Create a new cookbook and/or cookbook version.
+  # TODO: Properly document this.
   #
   # @example
   #   POST /api/v1/cookbooks
   #
   def create
-    @cookbook = Cookbook.create(name: 'redis', maintainer: 'john@example.com')
-    @cookbook.cookbook_versions.create!(license: 'MIT', version: '0.1.0', description: 'Configure and install redis.')
+    @category = Category.where("lower(name) = ?", params[:cookbook][:category].downcase).first
+    @cookbook = Cookbook.share!(params[:tarball], @category)
   end
 end

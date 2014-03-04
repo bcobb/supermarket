@@ -7,7 +7,6 @@ describe 'api/v1/cookbooks/create' do
       name: 'redis',
       maintainer: 'slime',
       description: 'great cookbook',
-      category: 'datastore',
       external_url: 'http://example.com',
       deprecated: false
     )

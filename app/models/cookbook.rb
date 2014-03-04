@@ -14,7 +14,10 @@ class Cookbook < ActiveRecord::Base
     }
   )
 
+  # Associations
+  # --------------------
   has_many :cookbook_versions, -> { order(created_at: :desc) }
+  belongs_to :category
 
   #
   # Returns the name of the +Cookbook+ parameterized.
@@ -49,5 +52,14 @@ class Cookbook < ActiveRecord::Base
     else
       cookbook_versions.find_by!(version: version)
     end
+  end
+
+  #
+  # TODO: Document
+  #
+  def self.share!(category, tarball)
+    cookbook = Cookbook.create(name: 'redis', maintainer: 'john@example.com')
+    cookbook.cookbook_versions.create!(license: 'MIT', version: '0.1.0', description: 'Configure and install redis.')
+    cookbook
   end
 end
