@@ -189,7 +189,7 @@ describe Api::V1::CookbooksController do
   end
 
   describe '#create' do
-    let(:payload) { File.read('spec/support/cookbook_fixtures/redis-test.tar.gz') }
+    let(:payload) { fixture_file_upload('spec/support/cookbook_fixtures/redis-test.tgz') }
     let!(:category) { create(:category, name: 'Databases') }
 
     context 'a new cookbook is being shared' do

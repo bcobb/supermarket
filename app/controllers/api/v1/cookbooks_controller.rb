@@ -68,7 +68,7 @@ class Api::V1::CookbooksController < Api::V1Controller
   #
   def create
     @category = Category.where("lower(name) = ?", params[:cookbook][:category].downcase).first
-    @cookbook = Cookbook.share!(params[:tarball], @category)
+    @cookbook = Cookbook.share!(@category, params[:tarball])
   end
 
   private

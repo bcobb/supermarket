@@ -1,3 +1,6 @@
+require 'rubygems/package'
+require 'zlib'
+
 class Cookbook < ActiveRecord::Base
   include PgSearch
 
@@ -6,8 +9,10 @@ class Cookbook < ActiveRecord::Base
     against: {
       name: 'A',
       description: 'B',
-      category: 'C',
       maintainer: 'D'
+    },
+    associated_against: {
+      category: :name
     },
     using: {
       tsearch: { prefix: true, dictionary: 'english' }
@@ -58,8 +63,32 @@ class Cookbook < ActiveRecord::Base
   # TODO: Document
   #
   def self.share!(category, tarball)
-    cookbook = Cookbook.create(name: 'redis', maintainer: 'john@example.com')
-    cookbook.cookbook_versions.create!(license: 'MIT', version: '0.1.0', description: 'Configure and install redis.')
+    metadata = extract_metadata_from(tarball)
+    cookbook = category.cookbooks.create(
+      name: metadata['name'],
+      maintainer: metadata['maintainer'],
+      description: metadata['description']
+    )
+
+    cookbook.cookbook_versions.create!(
+      license: metadata['license'],
+      version: metadata['version'],
+      description: metadata['description']
+    )
+
     cookbook
+  end
+
+  private
+
+  def self.extract_metadata_from(tarball)
+    contents = nil
+
+    Gem::Package::TarReader.new(Zlib::GzipReader.open tarball.path) do |tar|
+      entry = tar.find { |e| e.header.name =~ /metadata.json/ }
+      contents = JSON.parse(entry.read)
+    end
+
+    contents
   end
 end
