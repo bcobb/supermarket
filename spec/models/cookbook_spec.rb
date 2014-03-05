@@ -52,7 +52,7 @@ describe Cookbook do
       Cookbook.create(
         name: 'redis',
         maintainer: 'tokein',
-        category: 'datastore',
+        category: create(:category, name: 'datastore'),
         description: 'Redis: a fast, flexible datastore offering an extremely useful set of data structure primitives'
       )
     end
@@ -61,7 +61,7 @@ describe Cookbook do
       Cookbook.create(
         name: 'redisio',
         maintainer: 'fruit',
-        category: 'datastore',
+        category: create(:category, name: 'datastore'),
         description: 'Installs/Configures redis'
       )
     end
@@ -86,6 +86,24 @@ describe Cookbook do
     it 'returns cookbooks with a similar description' do
       expect(Cookbook.search('fast')).to include(redis)
       expect(Cookbook.search('fast')).to_not include(redisio)
+    end
+  end
+
+  describe '.share!' do
+    let(:category) { create(:category, name: 'Databases') }
+    let(:tarball) { File.read('spec/support/cookbook_fixtures/redis-test.tar.gz') }
+
+    context 'for a new cookbook' do
+      it 'creates a cookbook with metadata abstracted from a tarball' do
+        cookbook = Cookbook.share!(tarball, category)
+        expect(cookbook.name).to eql('redis-test')
+        expect(cookbook.description).to eql('Installs/Configures redis-test')
+        expect(cookbook.maintainer).to eql('YOUR_COMPANY_NAME')
+      end
+
+      it 'creates a cookbook version with metadata abstracted from a tarball'
+      it 'associates the cookbook with a specified category'
+      it 'returns a cookbook'
     end
   end
 end

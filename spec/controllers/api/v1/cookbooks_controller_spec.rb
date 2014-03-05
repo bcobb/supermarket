@@ -189,18 +189,13 @@ describe Api::V1::CookbooksController do
   end
 
   describe '#create' do
-    let(:payload) { File.read('spec/support/cookbook_fixtures/redis.tar.gz') }
+    let(:payload) { File.read('spec/support/cookbook_fixtures/redis-test.tar.gz') }
     let!(:category) { create(:category, name: 'Databases') }
 
     context 'a new cookbook is being shared' do
       let(:share) do
         post :create, cookbook: { category: 'databases' },
                       tarball: payload, format: :json
-      end
-
-      it 'finds a category to associate the cookbook to' do
-        share
-        expect(assigns[:category].name).to eql('Databases')
       end
 
       it 'creates a new cookbook' do

@@ -58,17 +58,6 @@ class Api::V1::CookbooksController < Api::V1Controller
     ).offset(@start).limit(@items)
   end
 
-  private
-
-  #
-  # This creates instance variables for +start+ and +items+, which are shared
-  # between the index and search methods.
-  #
-  def init_params
-    @start = params.fetch(:start, 0).to_i
-    @items = [params.fetch(:items, 10).to_i, 100].min
-  end
-
   #
   # POST /api/v1/cookbooks
   #
@@ -80,5 +69,16 @@ class Api::V1::CookbooksController < Api::V1Controller
   def create
     @category = Category.where("lower(name) = ?", params[:cookbook][:category].downcase).first
     @cookbook = Cookbook.share!(params[:tarball], @category)
+  end
+
+  private
+
+  #
+  # This creates instance variables for +start+ and +items+, which are shared
+  # between the index and search methods.
+  #
+  def init_params
+    @start = params.fetch(:start, 0).to_i
+    @items = [params.fetch(:items, 10).to_i, 100].min
   end
 end

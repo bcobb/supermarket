@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe 'POST /api/v1/cookbooks' do
   let(:payload) do
-    File.read('spec/support/cookbook_fixtures/redis.tar.gz')
+    File.read('spec/support/cookbook_fixtures/redis-test.tar.gz')
   end
 
   it 'returns a 200' do
-    post '/api/v1/cookbooks', cookbook: { category: 'databases' }
+    post '/api/v1/cookbooks', cookbook: { category: 'databases' }, tarball: payload
     expect(response.status.to_i).to eql(200)
   end
 
