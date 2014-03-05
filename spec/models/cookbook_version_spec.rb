@@ -12,6 +12,10 @@ describe CookbookVersion do
     it { should validate_presence_of(:cookbook_id) }
   end
 
+  context 'attachments' do
+    it { should have_attached_file(:tarball) }
+  end
+
   context '#to_param' do
     it 'returns the version in underscore format' do
       cookbook_version = CookbookVersion.new(version: '1.1.0')

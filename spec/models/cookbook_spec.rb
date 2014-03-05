@@ -91,10 +91,11 @@ describe Cookbook do
 
   describe '.share!' do
     let(:category) { create(:category, name: 'Databases') }
-    let(:tarball) { File.new(File.expand_path('spec/support/cookbook_fixtures/redis-test.tgz')) }
+    let(:tarball) { File.open('spec/support/cookbook_fixtures/redis-test.tgz') }
 
     context 'for a new cookbook' do
       let(:cookbook) { Cookbook.share!(category, tarball) }
+      let(:cookbook_version) { cookbook.get_version!('latest') }
 
       it 'creates a cookbook with metadata abstracted from a tarball' do
         expect(cookbook.name).to eql('redis-test')
@@ -103,7 +104,6 @@ describe Cookbook do
       end
 
       it 'creates a cookbook version with metadata abstracted from a tarball' do
-        cookbook_version = cookbook.get_version!('latest')
         expect(cookbook_version.license).to eql('All rights reserved')
         expect(cookbook_version.version).to eql('0.1.0')
         expect(cookbook_version.description).to eql('Installs/Configures redis-test')
@@ -111,6 +111,10 @@ describe Cookbook do
 
       it 'associates the cookbook with a specified category' do
         expect(cookbook.category).to eql(category)
+      end
+
+      it 'saves the tarball on the cookbook version' do
+        expect(File.open(cookbook_version.tarball.path).read).to eql(tarball.read)
       end
     end
   end

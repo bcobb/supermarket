@@ -1,9 +1,10 @@
 require 'rubygems/package'
-require 'zlib'
 
 class Cookbook < ActiveRecord::Base
   include PgSearch
 
+  # Search
+  # --------------------
   pg_search_scope(
     :search,
     against: {
@@ -64,6 +65,7 @@ class Cookbook < ActiveRecord::Base
   #
   def self.share!(category, tarball)
     metadata = extract_metadata_from(tarball)
+
     cookbook = category.cookbooks.create(
       name: metadata['name'],
       maintainer: metadata['maintainer'],
@@ -73,7 +75,8 @@ class Cookbook < ActiveRecord::Base
     cookbook.cookbook_versions.create!(
       license: metadata['license'],
       version: metadata['version'],
-      description: metadata['description']
+      description: metadata['description'],
+      tarball: tarball
     )
 
     cookbook
@@ -82,13 +85,13 @@ class Cookbook < ActiveRecord::Base
   private
 
   def self.extract_metadata_from(tarball)
-    contents = nil
+    metadata = nil
 
     Gem::Package::TarReader.new(Zlib::GzipReader.open tarball.path) do |tar|
       entry = tar.find { |e| e.header.name =~ /metadata.json/ }
-      contents = JSON.parse(entry.read)
+      metadata = JSON.parse(entry.read)
     end
 
-    contents
+    metadata
   end
 end
