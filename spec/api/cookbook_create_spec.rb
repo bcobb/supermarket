@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'POST /api/v1/cookbooks' do
-  let(:payload) { fixture_file_upload('spec/support/cookbook_fixtures/redis-test.tgz') }
+  let(:payload) { fixture_file_upload('spec/support/cookbook_fixtures/redis-test.tgz', 'application/x-gzip') }
   let!(:category) { create(:category, name: 'Databases') }
 
   it 'returns a 200' do

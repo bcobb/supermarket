@@ -65,12 +65,20 @@ class Cookbook < ActiveRecord::Base
   #
   def self.share!(category, tarball)
     metadata = extract_metadata_from(tarball)
+    cookbook = Cookbook.where(name: metadata['name']).first
 
-    cookbook = category.cookbooks.create(
-      name: metadata['name'],
-      maintainer: metadata['maintainer'],
-      description: metadata['description']
-    )
+    if cookbook.nil?
+      cookbook = category.cookbooks.create(
+        name: metadata['name'],
+        maintainer: metadata['maintainer'],
+        description: metadata['description']
+      )
+    else
+      cookbook.update_attributes(
+        maintainer: metadata['maintainer'],
+        description: metadata['description']
+      )
+    end
 
     cookbook.cookbook_versions.create!(
       license: metadata['license'],

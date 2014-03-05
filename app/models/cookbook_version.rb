@@ -13,7 +13,7 @@ class CookbookVersion < ActiveRecord::Base
   validates :version, presence: true
   validates :description, presence: true
   validates :cookbook_id, presence: true
-  validates_attachment :tarball, content_type: { content_type: ['application/x-gzip'] }
+  validates_attachment :tarball, presence: true, content_type: { content_type: ['application/x-gzip'] }
 
   #
   # Returns the verison of the +CookbookVersion+ with underscores replacing the
