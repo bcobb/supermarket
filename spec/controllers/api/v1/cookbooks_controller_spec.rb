@@ -216,5 +216,53 @@ describe Api::V1::CookbooksController do
         expect(response.status.to_i).to eql(200)
       end
     end
+
+    context 'the cookbook is not provided' do
+      before(:each) { post :create, tarball: payload }
+
+      it 'returns a 400' do
+        expect(response.status.to_i).to eql(400)
+      end
+
+      it 'returns a MISSING_REQUIRED_DATA error code' do
+        expect(JSON.parse(response.body)['error_code']).to eql('MISSING_REQUIRED_DATA')
+      end
+
+      it 'returns a corresponding error message' do
+        expect(JSON.parse(response.body)['error_messages']).to eql("Mulipart POST must include a part named 'cookbook'")
+      end
+    end
+
+    context 'the tarball is not provided' do
+      before(:each) { post :create, cookbook: { category: category } }
+
+      it 'returns a 400' do
+        expect(response.status.to_i).to eql(400)
+      end
+
+      it 'returns a MISSING_REQUIRED_DATA error code' do
+        expect(JSON.parse(response.body)['error_code']).to eql('MISSING_REQUIRED_DATA')
+      end
+
+      it 'returns a corresponding error message' do
+        expect(JSON.parse(response.body)['error_messages']).to eql("Mulipart POST must include a part named 'tarball'")
+      end
+    end
+
+    context 'an invalid category is provided' do
+      before(:each) { post :create, cookbook: { category: 'Fake Category' }, tarball: payload }
+
+      it 'returns a 400' do
+        expect(response.status.to_i).to eql(400)
+      end
+
+      it 'returns an INVALID_DATA error code' do
+        expect(JSON.parse(response.body)['error_code']).to eql('INVALID_DATA')
+      end
+
+      it 'returns a corresponding error message' do
+        expect(JSON.parse(response.body)['error_messages']).to eql("Category 'Fake Category' does not exist")
+      end
+    end
   end
 end

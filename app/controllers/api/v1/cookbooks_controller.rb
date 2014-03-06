@@ -78,7 +78,7 @@ class Api::V1::CookbooksController < Api::V1Controller
     ) unless params[:tarball]
 
     category_name = params[:cookbook].fetch(:category, '')
-    category = Category.where("lower(name) = ?", category_name.downcase).first
+    category = Category.where('lower(name) = ?', category_name.downcase).first
 
     return error(
       error_code: t('api.error_codes.invalid_data'),

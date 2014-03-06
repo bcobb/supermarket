@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'POST /api/v1/cookbooks' do
-  context 'the tarball and cookbook are provided and valid' do
+  context 'the user provides valid params' do
     let(:payload) { fixture_file_upload('spec/support/cookbook_fixtures/redis-test.tgz', 'application/x-gzip') }
     let!(:category) { create(:category, name: 'Databases') }
 
@@ -16,7 +16,7 @@ describe 'POST /api/v1/cookbooks' do
     end
   end
 
-  context 'the cookbook is not provided' do
+  context "the user doesn't provide valid params" do
     let(:payload) { fixture_file_upload('spec/support/cookbook_fixtures/redis-test.tgz', 'application/x-gzip') }
     before(:each) { post '/api/v1/cookbooks', tarball: payload }
 
@@ -24,47 +24,12 @@ describe 'POST /api/v1/cookbooks' do
       expect(response.status.to_i).to eql(400)
     end
 
-    it 'returns a MISSING_REQUIRED_DATA error code' do
-      expect(json_body['error_code']).to eql('MISSING_REQUIRED_DATA')
+    it 'returns a error code' do
+      expect(json_body['error_code']).to_not be_nil
     end
 
     it 'returns a corresponding error message' do
-      expect(json_body['error_messages']).to eql("Mulipart POST must include a part named 'cookbook'")
-    end
-  end
-
-  context 'the tarball is not provided' do
-    let!(:category) { create(:category, name: 'Databases') }
-    before(:each) { post '/api/v1/cookbooks', cookbook: { category: category } }
-
-    it 'returns a 400' do
-      expect(response.status.to_i).to eql(400)
-    end
-
-    it 'returns a MISSING_REQUIRED_DATA error code' do
-      expect(json_body['error_code']).to eql('MISSING_REQUIRED_DATA')
-    end
-
-    it 'returns a corresponding error message' do
-      expect(json_body['error_messages']).to eql("Mulipart POST must include a part named 'tarball'")
-    end
-  end
-
-  context 'an invalid category is provided' do
-    let(:payload) { fixture_file_upload('spec/support/cookbook_fixtures/redis-test.tgz', 'application/x-gzip') }
-    let!(:category) { create(:category, name: 'Databases') }
-    before(:each) { post '/api/v1/cookbooks', cookbook: { category: 'Fake Category' }, tarball: payload }
-
-    it 'returns a 400' do
-      expect(response.status.to_i).to eql(400)
-    end
-
-    it 'returns an INVALID_DATA error code' do
-      expect(json_body['error_code']).to eql('INVALID_DATA')
-    end
-
-    it 'returns a corresponding error message' do
-      expect(json_body['error_messages']).to eql("Category 'Fake Category' does not exist")
+      expect(json_body['error_messages']).to_not be_nil
     end
   end
 end
