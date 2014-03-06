@@ -67,11 +67,33 @@ class Api::V1::CookbooksController < Api::V1Controller
   #   POST /api/v1/cookbooks
   #
   def create
-    @category = Category.where("lower(name) = ?", params[:cookbook][:category].downcase).first
-    @cookbook = Cookbook.share!(@category, params[:tarball])
+    return error(
+      error_code: t('api.error_codes.missing_required_data'),
+      error_messages: t('api.error_messages.missing_cookbook')
+    ) unless params[:cookbook]
+
+    return error(
+      error_code: t('api.error_codes.missing_required_data'),
+      error_messages: t('api.error_messages.missing_tarball')
+    ) unless params[:tarball]
+
+    category_name = params[:cookbook].fetch(:category, '')
+    category = Category.where("lower(name) = ?", category_name.downcase).first
+
+    return error(
+      error_code: t('api.error_codes.invalid_data'),
+      error_messages: t('api.error_messages.non_existent_category',
+                        category_name: category_name)
+    ) unless category
+
+    @cookbook = Cookbook.share!(category, params[:tarball])
   end
 
   private
+
+  def error(body)
+    render json: body, status: 400
+  end
 
   #
   # This creates instance variables for +start+ and +items+, which are shared

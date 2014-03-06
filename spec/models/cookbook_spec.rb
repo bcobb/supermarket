@@ -16,7 +16,8 @@ describe Cookbook do
   describe '#get_version!' do
     let!(:kiwi) { create(:cookbook, name: 'kiwi', maintainer: 'fruit') }
     let!(:kiwi_0_1_0) do
-      create(:cookbook_version,
+      create(
+        :cookbook_version,
         cookbook: kiwi,
         version: '0.1.0',
         description: 'bird',
@@ -25,7 +26,8 @@ describe Cookbook do
     end
 
     let!(:kiwi_0_2_0) do
-      create(:cookbook_version,
+      create(
+        :cookbook_version,
         cookbook: kiwi,
         version: '0.2.0',
         description: 'better bird',
@@ -49,7 +51,8 @@ describe Cookbook do
 
   describe '.search' do
     let!(:redis) do
-      create(:cookbook,
+      create(
+        :cookbook,
         name: 'redis',
         maintainer: 'tokein',
         category: create(:category, name: 'datastore'),
@@ -58,7 +61,8 @@ describe Cookbook do
     end
 
     let!(:redisio) do
-      create(:cookbook,
+      create(
+        :cookbook,
         name: 'redisio',
         maintainer: 'fruit',
         category: create(:category, name: 'datastore'),
@@ -121,11 +125,9 @@ describe Cookbook do
     context 'for an existing cookbook' do
       it 'finds and updates the cookbook with metadata abstracted from a tarball' do
         cookbook = Cookbook.share!(category, tarball)
-
         expect(cookbook.maintainer).to eql('YOUR_COMPANY_NAME')
 
         Cookbook.share!(category, File.open('spec/support/cookbook_fixtures/redis-test-2.tgz'))
-
         cookbook.reload
         expect(cookbook.maintainer).to eql('Chef Software, Inc')
       end

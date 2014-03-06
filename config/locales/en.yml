@@ -14,3 +14,11 @@ en:
       unsubscribe:
         failure: "The repository was destroyed, but there was an issue unsubscribing from the repo."
         success: "The repository was destroyed and Supermarket has been unsubscribed from the repo."
+  api:
+    error_codes:
+      missing_required_data: "MISSING_REQUIRED_DATA"
+      invalid_data: "INVALID_DATA"
+    error_messages:
+      missing_cookbook: "Mulipart POST must include a part named 'cookbook'"
+      missing_tarball: "Mulipart POST must include a part named 'tarball'"
+      non_existent_category: "Category '%{category_name}' does not exist"
