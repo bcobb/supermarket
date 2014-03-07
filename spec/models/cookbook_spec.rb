@@ -92,45 +92,4 @@ describe Cookbook do
       expect(Cookbook.search('fast')).to_not include(redisio)
     end
   end
-
-  describe '.share!' do
-    let(:category) { create(:category, name: 'Databases') }
-    let(:tarball) { File.open('spec/support/cookbook_fixtures/redis-test.tgz') }
-
-    context 'for a new cookbook' do
-      let(:cookbook) { Cookbook.share!(category, tarball) }
-      let(:cookbook_version) { cookbook.get_version!('latest') }
-
-      it 'creates a cookbook with metadata abstracted from a tarball' do
-        expect(cookbook.name).to eql('redis-test')
-        expect(cookbook.description).to eql('Installs/Configures redis-test')
-        expect(cookbook.maintainer).to eql('YOUR_COMPANY_NAME')
-      end
-
-      it 'creates a cookbook version with metadata abstracted from a tarball' do
-        expect(cookbook_version.license).to eql('All rights reserved')
-        expect(cookbook_version.version).to eql('0.1.0')
-        expect(cookbook_version.description).to eql('Installs/Configures redis-test')
-      end
-
-      it 'associates the cookbook with a specified category' do
-        expect(cookbook.category).to eql(category)
-      end
-
-      it 'saves the tarball on the cookbook version' do
-        expect(File.open(cookbook_version.tarball.path).read).to eql(tarball.read)
-      end
-    end
-
-    context 'for an existing cookbook' do
-      it 'finds and updates the cookbook with metadata abstracted from a tarball' do
-        cookbook = Cookbook.share!(category, tarball)
-        expect(cookbook.maintainer).to eql('YOUR_COMPANY_NAME')
-
-        Cookbook.share!(category, File.open('spec/support/cookbook_fixtures/redis-test-2.tgz'))
-        cookbook.reload
-        expect(cookbook.maintainer).to eql('Chef Software, Inc')
-      end
-    end
-  end
 end

@@ -1,7 +1,7 @@
-require 'rubygems/package'
-
 class Cookbook < ActiveRecord::Base
   include PgSearch
+
+  scope :with_name, ->(name) { where(name: name) }
 
   # Search
   # --------------------
@@ -61,45 +61,26 @@ class Cookbook < ActiveRecord::Base
   end
 
   #
-  # TODO: Document
+  # @raise [ActiveRecord::ActiveRecordError]
   #
-  def self.share!(category, tarball)
-    metadata = extract_metadata_from(tarball)
-    cookbook = Cookbook.where(name: metadata['name']).first
+  # @return [TrueClass]
+  #
+  # @param metadata [CookbookUpload::Metadata]
+  # @param tarball [IO]
+  #
+  def publish_version!(metadata, tarball)
+    transaction do
+      self.maintainer = metadata.maintainer
+      save!
 
-    if cookbook.nil?
-      cookbook = category.cookbooks.create(
-        name: metadata['name'],
-        maintainer: metadata['maintainer'],
-        description: metadata['description']
-      )
-    else
-      cookbook.update_attributes(
-        maintainer: metadata['maintainer'],
-        description: metadata['description']
+      cookbook_versions.create!(
+        license: metadata.license,
+        version: metadata.version,
+        description: metadata.description,
+        tarball: tarball
       )
     end
 
-    cookbook.cookbook_versions.create!(
-      license: metadata['license'],
-      version: metadata['version'],
-      description: metadata['description'],
-      tarball: tarball
-    )
-
-    cookbook
-  end
-
-  private
-
-  def self.extract_metadata_from(tarball)
-    metadata = nil
-
-    Gem::Package::TarReader.new(Zlib::GzipReader.open tarball.path) do |tar|
-      entry = tar.find { |e| e.header.name =~ /metadata.json/ }
-      metadata = JSON.parse(entry.read)
-    end
-
-    metadata
+    true
   end
 end

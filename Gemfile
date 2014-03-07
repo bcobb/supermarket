@@ -24,6 +24,7 @@ gem 'premailer-rails', group: [:development, :production]
 gem 'jbuilder'
 gem 'pg_search'
 gem 'paperclip'
+gem 'virtus', require: false
 
 gem 'sass-rails',   '~> 4.0.1'
 gem 'compass-rails'

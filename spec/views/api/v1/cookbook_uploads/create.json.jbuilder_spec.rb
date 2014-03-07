@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'api/v1/cookbooks/create' do
+describe 'api/v1/cookbook_uploads/create' do
   let(:cookbook) do
     create(
       :cookbook,
