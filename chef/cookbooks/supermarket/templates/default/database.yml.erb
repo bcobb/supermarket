@@ -1,5 +1,5 @@
 production:
   username: <%= node['postgres']['user'] %>
-  adapter: postgresql
+  adapter: supermarket
   database: <%= node['postgres']['database'] %>
   pool: <%= node['supermarket']['database']['pool'] %>

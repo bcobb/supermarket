@@ -1,15 +1,15 @@
 development:
-  adapter: postgresql
+  adapter: supermarket
   database: supermarket_development
   host: localhost
 
 test:
-  adapter: postgresql
+  adapter: supermarket
   database: supermarket_test
   host: localhost
 
 production:
   username: <%= ENV['DB_USERNAME'] %>
   password: <%= ENV['DB_PASSWORD'] %>
-  adapter: postgresql
+  adapter: supermarket
   database: supermarket_production
