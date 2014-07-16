@@ -58,12 +58,12 @@ describe ContributorRequestsController do
       end.to change(ContributorRequestNotifier.jobs, :count).by(1)
     end
 
-    it 'redirects back on success' do
+    it 'renders the pending approval partial on success' do
       sign_in(contributing_user)
 
       post :create, ccla_signature_id: ccla_signature.id
 
-      expect(response).to redirect_to('/')
+      expect(response).to render_template('ccla_signatures/_pending_approval')
     end
   end
 

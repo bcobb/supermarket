@@ -11,7 +11,10 @@ class ContributorRequestsController < ApplicationController
     ccla_signature = CclaSignature.
       includes(:organization).
       find(params[:ccla_signature_id])
+
     organization = ccla_signature.organization
+
+    authorize! organization, :request_to_join?
 
     contributor_request = ContributorRequest.new(
       user: current_user,
@@ -19,13 +22,11 @@ class ContributorRequestsController < ApplicationController
       ccla_signature: ccla_signature
     )
 
-    authorize! contributor_request
-
     contributor_request.save!
 
     ContributorRequestNotifier.perform_async(contributor_request.id)
 
-    redirect_to :back
+    render partial: 'ccla_signatures/pending_approval'
   end
 
   #

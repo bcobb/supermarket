@@ -5,12 +5,10 @@
 
   <% if current_user && policy(@ccla_signature.organization).request_to_join? %>
     <p>
-      <%= link_to "Join this CCLA", ccla_signature_contributor_requests_path(@ccla_signature), class: "button radius tiny", rel: "contributor-request", method: :post %>
+      <%= link_to "Join this CCLA", ccla_signature_contributor_requests_path(@ccla_signature), class: "button radius tiny join", rel: "contributor-request", method: :post, remote: true %>
     </p>
   <% elsif current_user && current_user.requested_to_join?(@ccla_signature.organization) %>
-    <p>
-      <span class="button radius tiny">Request to join pending approval</span>
-    </p>
+    <%= render partial: 'pending_approval' %>
   <% end %>
 
   <% if current_user && policy(@ccla_signature.organization).view_cclas? %>
